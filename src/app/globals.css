@@ -62,3 +62,26 @@ body {
   .lamp { animation: none; }
   .animate-pulse { animation: none; }
 }
+
+html {
+  scroll-behavior: smooth;
+}
+
+/* Hero preview: cards land one after another (set --delay per card). */
+.reveal {
+  animation: reveal 700ms var(--ease-out-expo) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+.reveal .lamp {
+  animation-delay: calc(var(--delay, 0ms) + 250ms);
+}
+
+@keyframes reveal {
+  from { opacity: 0; transform: translateY(16px) scale(0.98); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .reveal { animation: none; }
+}

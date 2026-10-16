@@ -27,7 +27,7 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
-type ReportViewProps = { result: ReportResult; onReset: () => void };
+type ReportViewProps = { result: ReportResult; onReset?: () => void };
 
 export function ReportView({ result, onReset }: ReportViewProps) {
   const { listing, price, report } = result;
@@ -37,15 +37,17 @@ export function ReportView({ result, onReset }: ReportViewProps) {
 
   return (
     <article>
-      <button
-        type="button"
-        onClick={onReset}
-        className="text-sm font-medium text-sky-deep underline decoration-sky/40 underline-offset-4 hover:decoration-sky"
-      >
-        Проверить другое объявление
-      </button>
+      {onReset && (
+        <button
+          type="button"
+          onClick={onReset}
+          className="mb-6 text-sm font-medium text-sky-deep underline decoration-sky/40 underline-offset-4 hover:decoration-sky"
+        >
+          Проверить другое объявление
+        </button>
+      )}
 
-      <header className="mt-6">
+      <header>
         <h1 className="font-display text-3xl font-bold leading-tight sm:text-4xl">{listing.title}</h1>
         <p className="mt-2 text-asphalt-soft">{keyParams.join(", ")}</p>
         <a

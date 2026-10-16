@@ -3,9 +3,13 @@
 import { useState } from "react";
 import type { Report } from "@/lib/report/schema";
 
-type InspectionChecklistProps = { items: Report["inspectionChecklist"] };
+type InspectionChecklistProps = {
+  items: Report["inspectionChecklist"];
+  /** Hide the progress line (used in landing previews). */
+  compact?: boolean;
+};
 
-export function InspectionChecklist({ items }: InspectionChecklistProps) {
+export function InspectionChecklist({ items, compact = false }: InspectionChecklistProps) {
   const [checked, setChecked] = useState<ReadonlySet<number>>(new Set());
 
   function toggle(index: number) {
@@ -19,10 +23,12 @@ export function InspectionChecklist({ items }: InspectionChecklistProps) {
 
   return (
     <>
-      <p className="mt-1 text-sm text-asphalt-soft">
-        Отмечайте пункты прямо на осмотре. Проверено {checked.size} из {items.length}.
-      </p>
-      <ul className="mt-4 divide-y divide-line">
+      {!compact && (
+        <p className="mt-1 text-sm text-asphalt-soft">
+          Отмечайте пункты прямо на осмотре. Проверено {checked.size} из {items.length}.
+        </p>
+      )}
+      <ul className={`divide-y divide-line ${compact ? "" : "mt-4"}`}>
         {items.map((entry, index) => (
           <li key={entry.item}>
             <label className="flex cursor-pointer gap-4 py-4">

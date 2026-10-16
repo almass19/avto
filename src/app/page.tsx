@@ -1,13 +1,20 @@
 import { CheckFlow } from "@/components/check-form/CheckFlow";
+import { Faq, SiteFooter } from "@/components/landing/Faq";
+import { HeroPreview } from "@/components/landing/HeroPreview";
+import { HowItWorks, Positioning, PriceBlock } from "@/components/landing/LandingSections";
+import { ReportShowcase } from "@/components/landing/ReportShowcase";
 
 export default function Home() {
   return (
-    <main className="mx-auto w-full max-w-3xl px-4 pb-24 pt-10 sm:px-6 sm:pt-16">
-      <CheckFlow />
-      <footer className="mt-20 border-t border-line pt-6 text-sm text-asphalt-soft">
-        Разбор составляет AI по данным объявления. Это подсказка перед осмотром, а не
-        диагностика: машину всё равно стоит проверить на СТО.
-      </footer>
-    </main>
+    <>
+      <CheckFlow preview={<HeroPreview />}>
+        <ReportShowcase />
+        <Positioning />
+        <HowItWorks />
+        <PriceBlock />
+        <Faq />
+      </CheckFlow>
+      <SiteFooter />
+    </>
   );
 }

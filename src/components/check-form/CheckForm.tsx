@@ -28,7 +28,7 @@ export function CheckForm({ onSubmit, error }: CheckFormProps) {
       <label htmlFor={urlId} className="block font-medium">
         Ссылка на объявление
       </label>
-      <div className="mt-2 flex flex-col gap-3 sm:flex-row">
+      <div className="mt-2 flex flex-col gap-3 sm:flex-row lg:flex-col xl:flex-row">
         <input
           id={urlId}
           type="url"
@@ -46,7 +46,7 @@ export function CheckForm({ onSubmit, error }: CheckFormProps) {
           type="submit"
           className="rounded-xl bg-sky px-6 py-3 font-display text-sm font-bold text-white transition-[background-color,transform] duration-[var(--duration-fast)] hover:bg-sky-deep active:translate-y-px"
         >
-          Разобрать объявление
+          Разобрать
         </button>
       </div>
 

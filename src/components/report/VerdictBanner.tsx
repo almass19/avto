@@ -1,10 +1,5 @@
 import type { Report } from "@/lib/report/schema";
-
-const VERDICT_STYLE = {
-  go: { color: "text-go", label: "Можно ехать смотреть" },
-  caution: { color: "text-caution", label: "Есть вопросы" },
-  avoid: { color: "text-avoid", label: "Лучше пропустить" },
-} as const;
+import { Lamp, VERDICT_STYLE } from "@/components/ui/Lamp";
 
 export function VerdictBanner({ verdict }: { verdict: Report["verdict"] }) {
   const style = VERDICT_STYLE[verdict.level];
@@ -15,7 +10,7 @@ export function VerdictBanner({ verdict }: { verdict: Report["verdict"] }) {
       className="rounded-2xl bg-asphalt p-6 text-white sm:p-8"
     >
       <div className="flex items-center gap-3">
-        <span aria-hidden className={`lamp h-4 w-4 rounded-full bg-current ${style.color}`} />
+        <Lamp level={verdict.level} />
         <span className={`font-display text-sm font-medium ${style.color}`}>{style.label}</span>
       </div>
       <h2

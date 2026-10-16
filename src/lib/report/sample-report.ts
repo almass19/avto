@@ -1,4 +1,33 @@
+import type { Listing } from "@/lib/kolesa/types";
+import { comparePrice } from "./price";
 import type { Report } from "./schema";
+
+/** Listing that matches SAMPLE_REPORT — used on the landing and the sample-report page. */
+export const SAMPLE_LISTING: Listing = {
+  id: 231907524,
+  url: "https://kolesa.kz/a/show/231907524",
+  title: "Toyota Estima 2008 г.",
+  brand: "Toyota",
+  model: "Estima",
+  year: 2008,
+  priceKzt: 5_500_000,
+  avgPriceKzt: 5_729_000,
+  photoCount: 14,
+  publishedAt: null,
+  imageUrl: null,
+  params: {
+    Город: "Жанаозен, Мангистауская область",
+    Кузов: "Минивэн",
+    "Объем двигателя, л": "3.5 (бензин)",
+    Пробег: "260 000 км",
+    "Коробка передач": "Автомат",
+    Привод: "Передний привод",
+    Руль: "Справа",
+    "Растаможен в Казахстане": "Да",
+  },
+};
+
+export const SAMPLE_PRICE = comparePrice(SAMPLE_LISTING.priceKzt, SAMPLE_LISTING.avgPriceKzt);
 
 /** Used when MOCK_REPORT=1 — lets you work on the UI without spending API credits. */
 export const SAMPLE_REPORT: Report = {
