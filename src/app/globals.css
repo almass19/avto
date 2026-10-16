@@ -1,0 +1,64 @@
+@import "tailwindcss";
+
+:root {
+  --asphalt: #1d2430;
+  --asphalt-soft: #4a5566;
+  --road: #e9ecf0;
+  --surface: #ffffff;
+  --line: #d5dae1;
+  --sky: #00a3dd;
+  --sky-deep: #0079a8;
+  --go: #1f9d55;
+  --caution: #e8a317;
+  --avoid: #d7263d;
+
+  --duration-fast: 150ms;
+  --duration-normal: 300ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@theme inline {
+  --color-asphalt: var(--asphalt);
+  --color-asphalt-soft: var(--asphalt-soft);
+  --color-road: var(--road);
+  --color-surface: var(--surface);
+  --color-line: var(--line);
+  --color-sky: var(--sky);
+  --color-sky-deep: var(--sky-deep);
+  --color-go: var(--go);
+  --color-caution: var(--caution);
+  --color-avoid: var(--avoid);
+  --font-sans: var(--font-onest);
+  --font-display: var(--font-unbounded);
+}
+
+body {
+  background: var(--road);
+  color: var(--asphalt);
+  font-family: var(--font-onest), system-ui, sans-serif;
+}
+
+:focus-visible {
+  outline: 3px solid var(--sky);
+  outline-offset: 2px;
+}
+
+/* Dashboard-lamp glow for the verdict indicator. */
+.lamp {
+  box-shadow:
+    0 0 0 4px color-mix(in oklab, currentColor 18%, transparent),
+    0 0 24px 2px color-mix(in oklab, currentColor 55%, transparent);
+  animation: lamp-on 900ms var(--ease-out-expo) both;
+}
+
+@keyframes lamp-on {
+  0% { opacity: 0; transform: scale(0.6); }
+  40% { opacity: 1; }
+  55% { opacity: 0.35; }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .lamp { animation: none; }
+  .animate-pulse { animation: none; }
+}
