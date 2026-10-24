@@ -3,6 +3,7 @@ import { fetchListing } from "@/lib/kolesa/fetch-listing";
 import { ListingParseError, normalizeKolesaUrl } from "@/lib/kolesa/parse-listing";
 import { generateReport, ReportGenerationError } from "@/lib/report/generate-report";
 import { isRateLimited } from "@/lib/rate-limit";
+import { buildCacheKey, getCachedReport, saveCachedReport } from "@/lib/report/report-cache";
 
 export const maxDuration = 90;
 
@@ -19,7 +20,7 @@ function fail(status: number, error: string) {
 
 export async function POST(request: Request) {
   const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "local";
-  if (isRateLimited(ip)) {
+  if (await isRateLimited(ip)) {
     return fail(429, "Слишком много проверок подряд. Попробуйте через час.");
   }
 
@@ -33,9 +34,18 @@ export async function POST(request: Request) {
     return fail(400, "Нужна ссылка на объявление Kolesa.kz вида kolesa.kz/a/show/123456.");
   }
 
+  const sellerText = parsed.data.sellerText ?? null;
+  const cacheKey = buildCacheKey(canonicalUrl, sellerText);
+
   try {
+    const cached = await getCachedReport(cacheKey);
+    if (cached) return Response.json({ ok: true, data: cached });
+
     const listing = await fetchListing(canonicalUrl);
-    const result = await generateReport(listing, parsed.data.sellerText ?? null);
+    const result = await generateReport(listing, sellerText);
+    if (process.env.MOCK_REPORT !== "1") {
+      await saveCachedReport(cacheKey, canonicalUrl, result);
+    }
     return Response.json({ ok: true, data: result });
   } catch (error) {
     if (error instanceof ListingParseError || error instanceof ReportGenerationError) {

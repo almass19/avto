@@ -1,5 +1,5 @@
 import { expect, test } from "vitest";
-import { isRateLimited } from "./rate-limit";
+import { isRateLimitedLocally as isRateLimited } from "./rate-limit";
 
 test("allows 10 requests per hour per key, then blocks", () => {
   const now = 1_000_000;
