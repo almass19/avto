@@ -1,11 +1,14 @@
+import { after } from "next/server";
 import { z } from "zod";
 import { fetchListing } from "@/lib/kolesa/fetch-listing";
 import { ListingParseError, normalizeKolesaUrl } from "@/lib/kolesa/parse-listing";
+import { ensureModelCard, findModelCard } from "@/lib/model-card";
 import { generateReport, ReportGenerationError } from "@/lib/report/generate-report";
 import { isRateLimited } from "@/lib/rate-limit";
 import { buildCacheKey, getCachedReport, saveCachedReport } from "@/lib/report/report-cache";
 
-export const maxDuration = 90;
+// Covers the report itself plus the background model-card research in after().
+export const maxDuration = 300;
 
 const MAX_SELLER_TEXT = 4000;
 
@@ -42,9 +45,14 @@ export async function POST(request: Request) {
     if (cached) return Response.json({ ok: true, data: cached });
 
     const listing = await fetchListing(canonicalUrl);
-    const result = await generateReport(listing, sellerText);
+    const modelCard = await findModelCard(listing);
+    const result = await generateReport(listing, sellerText, modelCard);
+
     if (process.env.MOCK_REPORT !== "1") {
       await saveCachedReport(cacheKey, canonicalUrl, result);
+      // Research runs after the response, so the user never waits for it; the
+      // claim inside makes it a cheap no-op when the card is already fresh.
+      after(() => ensureModelCard(listing));
     }
     return Response.json({ ok: true, data: result });
   } catch (error) {

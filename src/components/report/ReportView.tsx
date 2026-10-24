@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import type { CardSource } from "@/lib/model-card/schema";
 import type { ReportResult } from "@/lib/report/generate-report";
 import { InspectionChecklist } from "./InspectionChecklist";
 import { PriceScale } from "./PriceScale";
@@ -27,10 +28,26 @@ function Section({ id, title, children }: { id: string; title: string; children:
   );
 }
 
+const MAX_SOURCE_LABEL = 40;
+
+/** Short label: "drom.ru — Отзывы владельцев Toyota…" */
+function sourceLabel(source: CardSource): string {
+  let host = source.url;
+  try {
+    host = new URL(source.url).hostname.replace(/^www\./, "");
+  } catch {
+    // keep the raw url
+  }
+  const title = source.title.length > MAX_SOURCE_LABEL ? `${source.title.slice(0, MAX_SOURCE_LABEL)}…` : source.title;
+  return title && title !== source.url ? `${host} — ${title}` : host;
+}
+
 type ReportViewProps = { result: ReportResult; onReset?: () => void };
 
 export function ReportView({ result, onReset }: ReportViewProps) {
   const { listing, price, report } = result;
+  // Cached results come from storage: only render real web links.
+  const sources = (result.sources ?? []).filter((source) => /^https?:\/\//.test(source.url));
   const keyParams = ["Пробег", "Объем двигателя, л", "Коробка передач", "Привод", "Руль"]
     .map((key) => listing.params[key])
     .filter(Boolean);
@@ -89,6 +106,25 @@ export function ReportView({ result, onReset }: ReportViewProps) {
             </li>
           ))}
         </ul>
+        {sources.length > 0 && (
+          <div className="mt-4 text-sm text-asphalt-soft">
+            <p>По отзывам владельцев и обзорам:</p>
+            <ul className="mt-1 flex flex-wrap gap-x-4 gap-y-1">
+              {sources.map((source) => (
+                <li key={source.url}>
+                  <a
+                    href={source.url}
+                    target="_blank"
+                    rel="noopener noreferrer nofollow"
+                    className="text-sky-deep underline decoration-sky/40 underline-offset-4 hover:decoration-sky"
+                  >
+                    {sourceLabel(source)}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
       </Section>
 
       <Section id="checklist-heading" title="Чек-лист для осмотра">
